@@ -347,7 +347,7 @@ class StacItem(AbstractStacCatalog):
         StacAsset with mapping of Asset names to Xarray bands
 
         Examples
-        -------
+        --------
         stack = item.stack_bands(['nir','red'])
         da = stack(chunks=dict(band=1, x=2048, y=2048)).to_dask()
 
@@ -367,7 +367,10 @@ class StacItem(AbstractStacCatalog):
         for band in bands:
             # band can be band id, name or common_name
             if band in assets:
-                info = next((b for b in band_info if b.get('id', b.get('name')) == band), None,)
+                info = next(
+                    (b for b in band_info if b.get('id', b.get('name')) == band),
+                    None,
+                )
             else:
                 info = next((b for b in band_info if b.get('common_name') == band), None)
                 if info is not None:

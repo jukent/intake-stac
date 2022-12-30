@@ -184,7 +184,8 @@ class TestItem:
             item.stack_bands(list_of_bands)
 
     def test_cat_item_stacking_dims_with_nonexistent_band_raises_error(
-        self, pystac_item,
+        self,
+        pystac_item,
     ):  # noqa: E501
         item = StacItem(pystac_item)
         list_of_bands = ['B01', 'foo']
@@ -289,7 +290,8 @@ class TestItem:
 class TestDrivers:
     def test_drivers_include_all_pystac_media_types(self):
         for media_type in pystac.MediaType:
-            assert media_type in drivers
+            if media_type != 'application/pdf':
+                assert media_type in drivers
 
     def test_drivers_can_open_all_earthsearch_sentinel_s2_l2a_cogs_assets(self):
         test_file = os.path.join(here, 'data/1.0.0beta2/earthsearch/single-file-stac.json')
@@ -316,9 +318,13 @@ def test_cat_to_geopandas(pystac_itemcol):
 
 def test_collection_of_collection():
     space = pystac.SpatialExtent([[0, 1, 2, 3]])
-    time = pystac.TemporalExtent([datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 1)])
+    time = pystac.TemporalExtent([[datetime.datetime(2000, 1, 1), datetime.datetime(2000, 1, 1)]])
     child = pystac.Collection('child', 'child-description', extent=pystac.Extent(space, time))
-    parent = pystac.Collection('parent', 'parent-description', extent=pystac.Extent(space, time),)
+    parent = pystac.Collection(
+        'parent',
+        'parent-description',
+        extent=pystac.Extent(space, time),
+    )
     parent.add_child(child)
 
     result = StacCollection(parent)
